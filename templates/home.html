@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js">
+    </script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $("#sub").click(function() {
+            $.post('/ajaxCreate', {
+                title: $("#title").val(),
+                body: $("#body").val()
+            }).done(function(data) {
+                alert(data);
+                var jp = $.parseJSON(data);
+                var title = jp.title;
+                var body = jp.body;
+                var id = jp.id;
+                var tex = "<li>" + title + " says: <b>" + body + "</b> <a href=\"/delete?id=" + id + "\">delete</a></li>";
+                //alert(tex);
+                var lis = $("#layout").append(tex);
+
+            }).fail(function() {
+
+            });
+        });
+    });
+    </script>
+</head>
+
+<body>
+    <h1>
+<a href="https://github.com/login/oauth/authorize?client_id={{ clientid }}&scope=repo">pygitstar
+</a></h1>
+</body>
+
+</html>
