@@ -3,9 +3,12 @@ import oauth
 import urllib  
 import json
 import urllib 
+from models import Project
 
 app = Flask(__name__)
 tokenurl = "https://github.com/login/oauth/access_token?client_id=%s&client_secret=%s&code=%s"
+# 用Python处理Cookie http://blog.csdn.net/ericzhong83/article/details/7576371
+# http://flask.pocoo.org/snippets
 
 
 with open('client_secrets.json') as data_file:    
@@ -42,9 +45,15 @@ def authorizationcallback():
 	myuserstr = ujs.read().decode('utf-8')
 	myuser = json.loads(myuserstr)
 	usersname = myuser["login"]
-	resprojects = urllib.request.urlopen("https://api.github.com/users/%s/starred?access_token=%s" %(usersname,access_token)) 
-	return resprojects.read().decode('utf-8')
-	return render_template("home.html")
+	resprojects = urllib.request.urlopen("https://api.github.com/users/%s/starred?access_token=%s&page=1&per_page=100" %(usersname,access_token)) 
+	projectsstr =  resprojects.read().decode('utf-8')
+	pyprojectss = json.loads(projectsstr)
+	print("projects:",len(pyprojectss))
+	Projectsr = [] 
+	for pp in pyprojectss:
+		Projectsr.append(Project(pp["id"],pp["name"],pp["description"]))
+	#return projectsstr
+	return render_template("projects.html",projects=Projectsr)
 
 
 if __name__ == "__main__":
